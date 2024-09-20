@@ -1,0 +1,47 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) throws IOException {
+        // BufferedReader for fast input
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        String[] firstLine = bufferedReader.readLine().split(" ");
+        int n = Integer.parseInt(firstLine[0]);  // number of elements in the array
+        int k = Integer.parseInt(firstLine[1]);  // the target difference
+        
+        // Read the array of integers
+        int[] arr = Arrays.stream(bufferedReader.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        bufferedReader.close();
+
+        // Call the function to count pairs
+        int result = countPairsWithDifference(arr, k);
+        
+        // Output the result
+        System.out.println(result);
+    }
+
+    public static int countPairsWithDifference(int[] arr, int k) {
+        // Create a set to store the elements
+        Set<Integer> set = new HashSet<>();
+        // Add all elements to the set for O(1) lookups
+        for (int num : arr) {
+            set.add(num);
+        }
+        
+        int count = 0;
+        // Iterate through the array and check if the complement exists
+        for (int num : arr) {
+            // Check if there is a number that differs by k
+            if (set.contains(num + k)) {
+                count++;
+            }
+            // (optional) Uncomment this if you want to consider `num - k` pairs as well
+            // if (set.contains(num - k)) {
+            //     count++;
+            // }
+        }
+        
+        return count;
+    }
+}
