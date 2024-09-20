@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Solution {
+public class Solution { 
 
     public static int minimumLoss(long[] price) {
         // Create a list of pairs where each pair holds the price and its original index (year)
