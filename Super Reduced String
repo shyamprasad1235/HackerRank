@@ -1,0 +1,52 @@
+import java.io.*;
+import java.util.*;
+
+class Result {
+
+    public static String superReducedString(String s) {
+        Stack<Character> stack = new Stack<>();
+        
+        // Traverse the string character by character
+        for (char c : s.toCharArray()) {
+            // If the stack is not empty and the top of the stack matches the current character, pop it
+            if (!stack.isEmpty() && stack.peek() == c) {
+                stack.pop();
+            } else {
+                // Otherwise, push the current character onto the stack
+                stack.push(c);
+            }
+        }
+        
+        // Build the reduced string from the stack
+        StringBuilder reducedString = new StringBuilder();
+        while (!stack.isEmpty()) {
+            reducedString.insert(0, stack.pop());
+        }
+        
+        // If the reduced string is empty, return "Empty String"
+        return reducedString.length() == 0 ? "Empty String" : reducedString.toString();
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        // BufferedReader for reading input
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        // BufferedWriter for writing output
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        // Read the input string
+        String s = bufferedReader.readLine();
+
+        // Call the function from the Result class to get the reduced string
+        String result = Result.superReducedString(s);
+
+        // Write the result to the output
+        bufferedWriter.write(result);
+        bufferedWriter.newLine();
+
+        // Close resources
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
