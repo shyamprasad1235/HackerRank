@@ -1,0 +1,44 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        int t = Integer.parseInt(bufferedReader.readLine());  // number of test cases
+
+        for (int test = 0; test < t; test++) {
+            int m = Integer.parseInt(bufferedReader.readLine());  // total money
+            int n = Integer.parseInt(bufferedReader.readLine());  // number of ice cream flavors
+            int[] costs = Arrays.stream(bufferedReader.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+
+            // Find and print the indices of the two flavors
+            int[] result = findFlavors(costs, m);
+            System.out.println(result[0] + " " + result[1]);
+        }
+        
+        bufferedReader.close();
+    }
+
+    public static int[] findFlavors(int[] costs, int money) {
+        // HashMap to store the cost and its index (1-based index)
+        HashMap<Integer, Integer> costMap = new HashMap<>();
+
+        // Traverse the array of costs
+        for (int i = 0; i < costs.length; i++) {
+            int complement = money - costs[i];
+            
+            // Check if the complement exists in the map
+            if (costMap.containsKey(complement)) {
+                // Return the indices (1-based, so we add 1 to i and to the stored index)
+                return new int[]{costMap.get(complement), i + 1};
+            }
+            
+            // Otherwise, store the current cost and its index in the map
+            costMap.put(costs[i], i + 1);
+        }
+
+        // No solution found (this case shouldn't happen as per problem constraints)
+        return new int[]{-1, -1};
+    }
+}
