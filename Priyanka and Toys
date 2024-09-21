@@ -1,0 +1,41 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) throws IOException {
+        // BufferedReader for fast input
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(bufferedReader.readLine()); // number of toys
+        int[] weights = Arrays.stream(bufferedReader.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        bufferedReader.close();
+
+        // Call the function to calculate the minimum number of containers
+        int result = minContainers(weights);
+        
+        // Output the result
+        System.out.println(result);
+    }
+
+    public static int minContainers(int[] weights) {
+        // Sort the array of toy weights
+        Arrays.sort(weights);
+        
+        int count = 0;
+        int i = 0;
+        
+        // Greedily group toys
+        while (i < weights.length) {
+            // Start a new container with the current toy
+            count++;
+            int currentWeight = weights[i];
+            
+            // Move to the next toy that can't be grouped with the current container
+            while (i < weights.length && weights[i] <= currentWeight + 4) {
+                i++;
+            }
+        }
+        
+        return count;
+    }
+}
