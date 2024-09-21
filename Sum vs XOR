@@ -1,0 +1,39 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        long n = Long.parseLong(bufferedReader.readLine());
+        
+        // Call the function to calculate the result
+        long result = sumXor(n);
+        
+        // Output the result
+        System.out.println(result);
+        
+        bufferedReader.close();
+    }
+
+    public static long sumXor(long n) {
+        // Special case: If n is 0, the result is 1 (only x = 0 satisfies n + x = n ^ x)
+        if (n == 0) {
+            return 1;
+        }
+
+        // Count the number of 0 bits in the binary representation of n
+        long countZeroBits = 0;
+        while (n > 0) {
+            // Check the least significant bit; if it's 0, increment the count
+            if ((n & 1) == 0) {
+                countZeroBits++;
+            }
+            // Shift right to check the next bit
+            n >>= 1;
+        }
+
+        // The result is 2 raised to the power of the number of 0 bits
+        return 1L << countZeroBits;
+    }
+}
