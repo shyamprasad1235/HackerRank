@@ -1,0 +1,29 @@
+import java.util.Scanner;
+
+public class Solution {
+
+    // Function to calculate total likes after n days
+    public static int viralAdvertising(int n) {
+        int people = 5;        // Initial number of people who receive the ad
+        int totalLikes = 0;    // Total number of likes
+
+        // Loop through each day
+        for (int day = 1; day <= n; day++) {
+            int likes = people / 2;      // Half of the people like the ad
+            totalLikes += likes;         // Accumulate the total number of likes
+            people = likes * 3;          // Each person who liked it shares with 3 others
+        }
+
+        return totalLikes;               // Return the total number of likes
+    }
+
+    public static void main(String[] args) {
+        // Scanner to read input from the user
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();  // Input number of days
+
+        // Call viralAdvertising function and print the result
+        int result = viralAdvertising(n);
+        System.out.println(result);  // Print result only
+    }
+}
