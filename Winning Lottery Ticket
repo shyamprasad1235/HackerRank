@@ -1,0 +1,51 @@
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class WinningLotteryTicket {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        String[] tickets = new String[n];
+
+        // Input the lottery tickets
+        for (int i = 0; i < n; i++) {
+            tickets[i] = scanner.next();
+        }
+
+        // To store frequency of each bitmask
+        HashMap<Integer, Integer> bitmaskFrequency = new HashMap<>();
+
+        // Generate the bitmask for each ticket
+        for (String ticket : tickets) {
+            int bitmask = 0;
+            for (char digit : ticket.toCharArray()) {
+                bitmask |= (1 << (digit - '0'));
+            }
+            bitmaskFrequency.put(bitmask, bitmaskFrequency.getOrDefault(bitmask, 0) + 1);
+        }
+
+        long winningPairs = 0;
+        int allDigitsMask = (1 << 10) - 1; // This is 1023 in decimal (i.e., 1111111111 in binary)
+
+        // Convert the keys (unique bitmasks) into an array for pairing
+        Integer[] masks = bitmaskFrequency.keySet().toArray(new Integer[0]);
+
+        // Count pairs of different bitmasks
+        for (int i = 0; i < masks.length; i++) {
+            for (int j = i + 1; j < masks.length; j++) {
+                if ((masks[i] | masks[j]) == allDigitsMask) {
+                    winningPairs += (long) bitmaskFrequency.get(masks[i]) * bitmaskFrequency.get(masks[j]);
+                }
+            }
+        }
+
+        // Count pairs where both tickets have the same bitmask (they themselves form a pair)
+        if (bitmaskFrequency.containsKey(allDigitsMask)) {
+            long freq = bitmaskFrequency.get(allDigitsMask);
+            winningPairs += (freq * (freq - 1)) / 2; // Combination of two tickets from freq (nC2)
+        }
+
+        System.out.println(winningPairs);
+    }
+}
