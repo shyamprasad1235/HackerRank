@@ -34,7 +34,7 @@ class Result {
             result.add(rankIndex + 2);
         }
 
-        return result;
+        return result; // Ensure the result is returned here
     }
 }
 
