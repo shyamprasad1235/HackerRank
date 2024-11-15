@@ -1,0 +1,74 @@
+import java.io.*;
+import java.util.*;
+
+class Result {
+
+    /*
+     * Complete the 'climbingLeaderboard' function below.
+     *
+     * The function is expected to return an INTEGER_ARRAY.
+     * The function accepts following parameters:
+     *  1. INTEGER_ARRAY ranked
+     *  2. INTEGER_ARRAY player
+     */
+
+    public static List<Integer> climbingLeaderboard(List<Integer> ranked, List<Integer> player) {
+        // Step 1: Remove duplicates from ranked list
+        List<Integer> uniqueRanks = new ArrayList<>();
+        for (int score : ranked) {
+            if (uniqueRanks.isEmpty() || uniqueRanks.get(uniqueRanks.size() - 1) != score) {
+                uniqueRanks.add(score);
+            }
+        }
+
+        List<Integer> result = new ArrayList<>();
+        int rankIndex = uniqueRanks.size() - 1;
+
+        // Step 2: For each player score, determine the rank
+        for (int playerScore : player) {
+            // Move up the leaderboard until the player's score is not greater than the current rank
+            while (rankIndex >= 0 && playerScore >= uniqueRanks.get(rankIndex)) {
+                rankIndex--;
+            }
+            // Rank is (rankIndex + 2) because ranks are 1-based and rankIndex starts from 0
+            result.add(rankIndex + 2);
+        }
+
+        return result;
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int rankedCount = Integer.parseInt(bufferedReader.readLine().trim());
+        List<Integer> ranked = new ArrayList<>();
+
+        String[] rankedItems = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+        for (int i = 0; i < rankedCount; i++) {
+            int rankedItem = Integer.parseInt(rankedItems[i]);
+            ranked.add(rankedItem);
+        }
+
+        int playerCount = Integer.parseInt(bufferedReader.readLine().trim());
+        List<Integer> player = new ArrayList<>();
+
+        String[] playerItems = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+        for (int i = 0; i < playerCount; i++) {
+            int playerItem = Integer.parseInt(playerItems[i]);
+            player.add(playerItem);
+        }
+
+        List<Integer> result = Result.climbingLeaderboard(ranked, player);
+
+        for (Integer rank : result) {
+            bufferedWriter.write(rank.toString());
+            bufferedWriter.newLine();
+        }
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
