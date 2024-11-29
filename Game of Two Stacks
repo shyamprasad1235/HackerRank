@@ -1,0 +1,65 @@
+import java.util.*;
+
+public class TwoStacks {
+
+    public static int twoStacks(int x, List<Integer> stack1, List<Integer> stack2) {
+        int sum = 0, count = 0, maxCount = 0;
+
+        // Add elements from stack1 until sum exceeds x
+        int i = 0;
+        while (i < stack1.size() && sum + stack1.get(i) <= x) {
+            sum += stack1.get(i);
+            i++;
+        }
+        count = i;
+        maxCount = count;
+
+        // Start adding elements from stack2
+        int j = 0;
+        while (j < stack2.size()) {
+            sum += stack2.get(j);
+            j++;
+            count++;
+
+            // Remove elements from stack1 if sum exceeds x
+            while (sum > x && i > 0) {
+                i--;
+                sum -= stack1.get(i);
+                count--;
+            }
+
+            // Update maxCount if sum is within limits
+            if (sum <= x) {
+                maxCount = Math.max(maxCount, count);
+            }
+        }
+
+        return maxCount;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int t = scanner.nextInt();
+
+        while (t-- > 0) {
+            int n = scanner.nextInt();
+            int m = scanner.nextInt();
+            int x = scanner.nextInt();
+
+            List<Integer> stack1 = new ArrayList<>();
+            List<Integer> stack2 = new ArrayList<>();
+
+            for (int i = 0; i < n; i++) {
+                stack1.add(scanner.nextInt());
+            }
+
+            for (int i = 0; i < m; i++) {
+                stack2.add(scanner.nextInt());
+            }
+
+            System.out.println(twoStacks(x, stack1, stack2));
+        }
+
+        scanner.close();
+    }
+}
