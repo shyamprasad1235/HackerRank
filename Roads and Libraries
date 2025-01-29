@@ -1,0 +1,89 @@
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+class Result {
+    public static long roadsAndLibraries(int n, int c_lib, int c_road, List<List<Integer>> cities) {
+        if (c_lib <= c_road) {
+            return (long) n * c_lib;  // Cheaper to build a library in every city
+        }
+
+        // Graph representation using adjacency list
+        List<List<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        // Build the graph
+        for (List<Integer> edge : cities) {
+            int u = edge.get(0);
+            int v = edge.get(1);
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+        // Visited array to track visited cities
+        boolean[] visited = new boolean[n + 1];
+        long totalCost = 0;
+
+        // Finding connected components using DFS
+        for (int city = 1; city <= n; city++) {
+            if (!visited[city]) {
+                int componentSize = dfs(graph, visited, city);
+                totalCost += (long) c_lib + (long) (componentSize - 1) * c_road;
+            }
+        }
+
+        return totalCost;
+    }
+
+    private static int dfs(List<List<Integer>> graph, boolean[] visited, int city) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(city);
+        visited[city] = true;
+        int size = 1;
+
+        while (!stack.isEmpty()) {
+            int node = stack.pop();
+            for (int neighbor : graph.get(node)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    stack.push(neighbor);
+                    size++;
+                }
+            }
+        }
+        return size;
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        int q = Integer.parseInt(bufferedReader.readLine().trim());
+
+        for (int qItr = 0; qItr < q; qItr++) {
+            String[] firstMultipleInput = bufferedReader.readLine().trim().split(" ");
+            int n = Integer.parseInt(firstMultipleInput[0]);
+            int m = Integer.parseInt(firstMultipleInput[1]);
+            int c_lib = Integer.parseInt(firstMultipleInput[2]);
+            int c_road = Integer.parseInt(firstMultipleInput[3]);
+
+            List<List<Integer>> cities = new ArrayList<>();
+            for (int i = 0; i < m; i++) {
+                cities.add(Arrays.stream(bufferedReader.readLine().trim().split(" "))
+                        .map(Integer::parseInt)
+                        .collect(Collectors.toList()));  // FIXED here
+            }
+
+            long result = Result.roadsAndLibraries(n, c_lib, c_road, cities);
+            bufferedWriter.write(String.valueOf(result));
+            bufferedWriter.newLine();
+        }
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
