@@ -1,0 +1,31 @@
+int nonDivisibleSubset(int k, int s_count, int* s) {
+    // Allocate array for remainder frequencies
+    int* freq = (int*)calloc(k, sizeof(int));
+    
+    // Compute remainders and count frequencies
+    for (int i = 0; i < s_count; i++) {
+        freq[s[i] % k]++;
+    }
+    
+    int result = 0;
+    
+    // Handle remainder 0: include at most 1
+    if (freq[0] > 0) {
+        result += 1;
+    }
+    
+    // Handle remainder k/2 if k is even: include at most 1
+    if (k % 2 == 0 && freq[k / 2] > 0) {
+        result += 1;
+    }
+    
+    // Handle pairs (r, k-r) for r from 1 to ceil(k/2) - 1
+    for (int r = 1; r < (k + 1) / 2; r++) {
+        result += freq[r] > freq[k - r] ? freq[r] : freq[k - r];
+    }
+    
+    // Free allocated memory
+    free(freq);
+    
+    return result;
+}
