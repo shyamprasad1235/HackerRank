@@ -1,0 +1,93 @@
+import java.io.*;
+import java.util.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.toList;
+
+class Result {
+
+    public static int queensAttack(int n, int k, int r_q, int c_q, List<List<Integer>> obstacles) {
+        // Initialize distances in all 8 directions
+        long[] dist = new long[8];
+        dist[0] = c_q - 1;                   // left
+        dist[1] = n - r_q;                   // up
+        dist[2] = n - c_q;                   // right
+        dist[3] = r_q - 1;                   // down
+        dist[4] = Math.min(dist[1], dist[0]); // up-left
+        dist[5] = Math.min(dist[1], dist[2]); // up-right
+        dist[6] = Math.min(dist[3], dist[2]); // down-right
+        dist[7] = Math.min(dist[3], dist[0]); // down-left
+
+        for (int i = 0; i < k && i < obstacles.size(); i++) {
+            List<Integer> obstacle = obstacles.get(i);
+            if (obstacle.size() < 2) continue;
+            int r = obstacle.get(0);
+            int c = obstacle.get(1);
+            int y = r - r_q;
+            int x = c - c_q;
+
+            // Same row
+            if (y == 0) {
+                if (x < 0) dist[0] = Math.min(dist[0], -x - 1);        // left
+                else if (x > 0) dist[2] = Math.min(dist[2], x - 1);    // right
+            }
+            // Same column
+            else if (x == 0) {
+                if (y < 0) dist[3] = Math.min(dist[3], -y - 1);        // down
+                else if (y > 0) dist[1] = Math.min(dist[1], y - 1);    // up
+            }
+            // Diagonal
+            else if (Math.abs(y) == Math.abs(x)) {
+                int diff = Math.abs(y) - 1;
+                if (y > 0 && x < 0) dist[4] = Math.min(dist[4], diff);      // up-left
+                else if (y > 0 && x > 0) dist[5] = Math.min(dist[5], diff); // up-right
+                else if (y < 0 && x > 0) dist[6] = Math.min(dist[6], diff); // down-right
+                else if (y < 0 && x < 0) dist[7] = Math.min(dist[7], diff); // down-left
+            }
+        }
+
+        // Total up all possible moves
+        long total = 0;
+        for (int i = 0; i < 8; i++) {
+            total += dist[i];
+        }
+
+        return (int) total;
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        String[] firstMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+        int n = Integer.parseInt(firstMultipleInput[0]);
+        int k = Integer.parseInt(firstMultipleInput[1]);
+
+        String[] secondMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+        int r_q = Integer.parseInt(secondMultipleInput[0]);
+        int c_q = Integer.parseInt(secondMultipleInput[1]);
+
+        List<List<Integer>> obstacles = new ArrayList<>();
+
+        IntStream.range(0, k).forEach(i -> {
+            try {
+                obstacles.add(
+                    Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                          .map(Integer::parseInt)
+                          .collect(toList())
+                );
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        int result = Result.queensAttack(n, k, r_q, c_q, obstacles);
+
+        bufferedWriter.write(String.valueOf(result));
+        bufferedWriter.newLine();
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
