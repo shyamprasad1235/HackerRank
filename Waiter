@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define MAX_N 100000
+#define MAX_PRIME 10000
+
+// Function to check if a number is prime
+int isPrime(int n) {
+    if (n < 2) return 0;
+    for (int i = 2; i <= sqrt(n); i++) {
+        if (n % i == 0) return 0;
+    }
+    return 1;
+}
+
+// Function to get the first q prime numbers
+void getPrimes(int q, int* primes) {
+    int count = 0, num = 2;
+    while (count < q) {
+        if (isPrime(num)) {
+            primes[count++] = num;
+        }
+        num++;
+    }
+}
+
+int main() {
+    int n, q;
+    scanf("%d %d", &n, &q);
+    
+    // Input the stack of plates
+    int* stack = (int*)malloc(n * sizeof(int));
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &stack[i]);
+    }
+    
+    // Generate first q primes
+    int* primes = (int*)malloc(q * sizeof(int));
+    getPrimes(q, primes);
+    
+    // Arrays for stacks A, B, and answer
+    int* A = (int*)malloc(n * sizeof(int));
+    int* B = (int*)malloc(n * sizeof(int));
+    int* ans = (int*)malloc(n * sizeof(int));
+    int topA = n, topB = 0, topAns = 0;
+    
+    // Initialize stack A with input
+    for (int i = 0; i < n; i++) {
+        A[i] = stack[i];
+    }
+    
+    // Perform q iterations
+    for (int i = 0; i < q; i++) {
+        topB = 0;
+        int* tempA = (int*)malloc(n * sizeof(int));
+        int tempTopA = 0;
+        
+        // Process stack A from top to bottom
+        for (int j = topA - 1; j >= 0; j--) {
+            if (A[j] % primes[i] == 0) {
+                B[topB++] = A[j]; // Divisible, goes to B
+            } else {
+                tempA[tempTopA++] = A[j]; // Not divisible, goes to new A
+            }
+        }
+        
+        // Add B stack to answer (top to bottom)
+        for (int j = topB - 1; j >= 0; j--) {
+            ans[topAns++] = B[j];
+        }
+        
+        // Update stack A for next iteration
+        topA = tempTopA;
+        for (int j = 0; j < topA; j++) {
+            A[j] = tempA[j];
+        }
+        
+        free(tempA);
+    }
+    
+    // Add remaining plates in A to answer (top to bottom)
+    for (int j = topA - 1; j >= 0; j--) {
+        ans[topAns++] = A[j];
+    }
+    
+    // Print the result
+    for (int i = 0; i < topAns; i++) {
+        printf("%d\n", ans[i]);
+    }
+    
+    // Free allocated memory
+    free(stack);
+    free(primes);
+    free(A);
+    free(B);
+    free(ans);
+    
+    return 0;
+}
