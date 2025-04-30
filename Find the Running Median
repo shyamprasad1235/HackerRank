@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAXN 100000
+
+void swap(int* a, int* b) {
+    int t = *a; *a = *b; *b = t;
+}
+
+// ---------- Min Heap ----------
+void min_heapify_up(int* heap, int idx) {
+    while (idx > 0 && heap[idx] < heap[(idx - 1) / 2]) {
+        swap(&heap[idx], &heap[(idx - 1) / 2]);
+        idx = (idx - 1) / 2;
+    }
+}
+
+void min_heapify_down(int* heap, int size, int idx) {
+    int smallest = idx;
+    int l = 2 * idx + 1;
+    int r = 2 * idx + 2;
+
+    if (l < size && heap[l] < heap[smallest]) smallest = l;
+    if (r < size && heap[r] < heap[smallest]) smallest = r;
+
+    if (smallest != idx) {
+        swap(&heap[smallest], &heap[idx]);
+        min_heapify_down(heap, size, smallest);
+    }
+}
+
+// ---------- Max Heap ----------
+void max_heapify_up(int* heap, int idx) {
+    while (idx > 0 && heap[idx] > heap[(idx - 1) / 2]) {
+        swap(&heap[idx], &heap[(idx - 1) / 2]);
+        idx = (idx - 1) / 2;
+    }
+}
+
+void max_heapify_down(int* heap, int size, int idx) {
+    int largest = idx;
+    int l = 2 * idx + 1;
+    int r = 2 * idx + 2;
+
+    if (l < size && heap[l] > heap[largest]) largest = l;
+    if (r < size && heap[r] > heap[largest]) largest = r;
+
+    if (largest != idx) {
+        swap(&heap[largest], &heap[idx]);
+        max_heapify_down(heap, size, largest);
+    }
+}
+
+// ---------- Running Median ----------
+double* runningMedian(int a_count, int* a, int* result_count) {
+    int left[MAXN], right[MAXN];
+    int leftSize = 0, rightSize = 0;
+
+    double* result = malloc(a_count * sizeof(double));
+    *result_count = 0;
+
+    for (int i = 0; i < a_count; i++) {
+        int num = a[i];
+
+        left[leftSize++] = num;
+        max_heapify_up(left, leftSize - 1);
+
+        int maxLeft = left[0];
+        left[0] = left[--leftSize];
+        max_heapify_down(left, leftSize, 0);
+
+        right[rightSize++] = maxLeft;
+        min_heapify_up(right, rightSize - 1);
+
+        if (leftSize < rightSize) {
+            int minRight = right[0];
+            right[0] = right[--rightSize];
+            min_heapify_down(right, rightSize, 0);
+
+            left[leftSize++] = minRight;
+            max_heapify_up(left, leftSize - 1);
+        }
+
+        if (leftSize > rightSize) {
+            result[(*result_count)++] = (double)left[0];
+        } else {
+            result[(*result_count)++] = ((double)left[0] + right[0]) / 2.0;
+        }
+    }
+
+    return result;
+}
+
+// ---------- Input Helpers ----------
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+    char* data = malloc(alloc_length);
+
+    while (1) {
+        char* cursor = data + data_length;
+        if (!fgets(cursor, alloc_length - data_length, stdin)) break;
+        data_length += strlen(cursor);
+        if (data[data_length - 1] == '\n') break;
+        alloc_length <<= 1;
+        data = realloc(data, alloc_length);
+    }
+
+    if (data[data_length - 1] == '\n') data[data_length - 1] = '\0';
+    return data;
+}
+
+char* ltrim(char* str) {
+    while (isspace(*str)) str++;
+    return str;
+}
+
+char* rtrim(char* str) {
+    char* end = str + strlen(str) - 1;
+    while (end >= str && isspace(*end)) end--;
+    *(end + 1) = '\0';
+    return str;
+}
+
+int parse_int(char* str) {
+    return (int)strtol(str, NULL, 10);
+}
+
+// ---------- Main ----------
+int main() {
+    int a_count = parse_int(ltrim(rtrim(readline())));
+    int* a = malloc(a_count * sizeof(int));
+    for (int i = 0; i < a_count; i++) {
+        a[i] = parse_int(ltrim(rtrim(readline())));
+    }
+
+    int result_count;
+    double* result = runningMedian(a_count, a, &result_count);
+
+    for (int i = 0; i < result_count; i++) {
+        printf("%.1lf\n", result[i]);
+    }
+
+    free(a);
+    free(result);
+    return 0;
+}
