@@ -1,0 +1,16 @@
+int compare(const void *a, const void *b) {
+    return (*(int *)b - *(int *)a);
+}
+
+int getMinimumCost(int k, int c_count, int* c) {
+
+    qsort(c, c_count, sizeof(int), compare);
+    int total_cost = 0;
+
+    for (int i = 0; i < c_count; i++) {
+        
+        int multiplier = (i / k) + 1;
+        total_cost += multiplier * c[i];
+    }
+    return total_cost;
+}
