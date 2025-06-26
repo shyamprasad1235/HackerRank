@@ -1,0 +1,39 @@
+import math
+import os
+import sys
+
+def minimumPasses(m, w, p, n):
+    candies = 0
+    passes = 0
+    min_passes = math.ceil(n / (m * w)) 
+
+    while candies < n:
+        prod = m * w      
+        min_passes = min(min_passes, passes + math.ceil((n - candies) / prod))
+        if candies < p:
+            wait = math.ceil((p - candies) / prod)
+            passes += wait
+            candies += prod * wait
+            continue
+        buy = candies // p
+        candies %= p
+
+        total = m + w + buy
+        half = total // 2
+        if m > w:
+            m = max(m, half)
+            w = total - m
+        else:
+            w = max(w, half)
+            m = total - w
+        passes += 1
+        candies += m * w
+
+    return min(min_passes, passes)
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+    m, w, p, n = map(int, input().rstrip().split())
+    result = minimumPasses(m, w, p, n)
+    fptr.write(str(result) + '\n')
+    fptr.close()
