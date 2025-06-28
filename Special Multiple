@@ -1,0 +1,69 @@
+#define MAX_QUEUE 10000
+#define MAX_LEN 105
+#define MAX_N 505
+
+typedef struct {
+    char num[MAX_LEN];
+    int rem;
+} Node;
+
+typedef struct {
+    Node data[MAX_QUEUE];
+    int front, rear;
+} Queue;
+
+void initQueue(Queue* q) {
+    q->front = q->rear = 0;
+}
+
+bool isEmpty(Queue* q) {
+    return q->front == q->rear;
+}
+
+void enqueue(Queue* q, Node val) {
+    q->data[q->rear++] = val;
+}
+
+Node dequeue(Queue* q) {
+    return q->data[q->front++];
+}
+
+char* solve(int n) {
+    static int visited[MAX_N] = {0};
+    memset(visited, 0, sizeof(visited));
+
+    Queue q;
+    initQueue(&q);
+
+    Node start;
+    strcpy(start.num, "9");
+    start.rem = 9 % n;
+    enqueue(&q, start);
+    visited[start.rem] = 1;
+
+    while (!isEmpty(&q)) {
+        Node curr = dequeue(&q);
+
+        if (curr.rem == 0) {
+            char* result = (char*)malloc(strlen(curr.num) + 1);
+            strcpy(result, curr.num);
+            return result;
+        }
+        Node next0;
+        snprintf(next0.num, MAX_LEN, "%s0", curr.num);
+        next0.rem = (curr.rem * 10) % n;
+        if (!visited[next0.rem]) {
+            visited[next0.rem] = 1;
+            enqueue(&q, next0);
+        }
+        Node next9;
+        snprintf(next9.num, MAX_LEN, "%s9", curr.num);
+        next9.rem = (curr.rem * 10 + 9) % n;
+        if (!visited[next9.rem]) {
+            visited[next9.rem] = 1;
+            enqueue(&q, next9);
+        }
+    }
+
+    return NULL; 
+}
