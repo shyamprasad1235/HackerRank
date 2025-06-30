@@ -1,0 +1,70 @@
+typedef struct Edge {
+    int v;
+    struct Edge* next;
+} Edge;
+
+void addEdge(Edge* adj[], int u, int v) {
+    Edge* newEdge = (Edge*)malloc(sizeof(Edge));
+    newEdge->v = v;
+    newEdge->next = adj[u];
+    adj[u] = newEdge;
+}
+
+long long dfs(int node, int parent, Edge* adj[], int* data, long long* subtree_sums, int data_count) {
+    // 1-based indexing in edges, 0-based in data
+    subtree_sums[node] = data[node - 1];
+    for (Edge* e = adj[node]; e != NULL; e = e->next) {
+        int neighbor = e->v;
+        if (neighbor != parent) {
+            subtree_sums[node] += dfs(neighbor, node, adj, data, subtree_sums, data_count);
+        }
+    }
+    return subtree_sums[node];
+}
+
+int cutTheTree(int data_count, int* data, int edges_rows, int edges_columns, int** edges) {
+    // Initialize adjacency list
+    Edge* adj[data_count + 1];
+    for (int i = 0; i <= data_count; i++) {
+        adj[i] = NULL;
+    }
+
+    for (int i = 0; i < edges_rows; i++) {
+        int u = edges[i][0];
+        int v = edges[i][1];
+        addEdge(adj, u, v);
+        addEdge(adj, v, u);
+    }
+
+    long long total_sum = 0;
+    for (int i = 0; i < data_count; i++) {
+        total_sum += data[i];
+    }
+
+    long long* subtree_sums = (long long*)calloc(data_count + 1, sizeof(long long));
+    dfs(1, -1, adj, data, subtree_sums, data_count);
+
+    long long min_diff = LLONG_MAX;
+    for (int i = 0; i < edges_rows; i++) {
+        int u = edges[i][0];
+        int v = edges[i][1];
+        long long subtree_sum = subtree_sums[u] < subtree_sums[v] ? subtree_sums[u] : subtree_sums[v];
+        long long other_subtree_sum = total_sum - subtree_sum;
+        long long diff = llabs(subtree_sum - other_subtree_sum);
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    for (int i = 1; i <= data_count; i++) {
+        Edge* e = adj[i];
+        while (e != NULL) {
+            Edge* temp = e;
+            e = e->next;
+            free(temp);
+        }
+    }
+    free(subtree_sums);
+    
+    return (int)min_diff;
+}
