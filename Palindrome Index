@@ -1,0 +1,30 @@
+bool isPalindromeRange ( const char* s, int left, int right){
+    while (left < right){
+        if (s[left] != s [right]){
+            return false;
+        }
+        left++;
+        right--;
+    }
+    return true;
+}
+int palindromeIndex(char* s) {
+    int left = 0;
+    int right = strlen(s) - 1;
+    
+    while (left < right){
+        if (s[left] != s[right]){
+            
+            if (isPalindromeRange(s,  left + 1, right)){
+                return left;
+            }
+            if (isPalindromeRange(s, left, right - 1)){
+                return right;
+            }
+            return - 1;
+        }
+        left++;
+        right--;
+    }
+    return -1;
+}
