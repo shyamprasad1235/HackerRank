@@ -1,0 +1,25 @@
+int workbook(int n, int k, int arr_count, int* arr) {
+    int special_problems = 0;
+    int current_page = 1;
+
+    for (int i = 0; i < n; i++) {
+        int problems_in_chapter = arr[i];
+        int problem_number = 1;
+
+        while (problem_number <= problems_in_chapter) {
+            int start = problem_number;
+            int end = (problem_number + k - 1 < problems_in_chapter) 
+                      ? (problem_number + k - 1) 
+                      : problems_in_chapter;
+
+            if (current_page >= start && current_page <= end) {
+                special_problems++;
+            }
+
+            current_page++;
+            problem_number += k;
+        }
+    }
+
+    return special_problems;
+}
