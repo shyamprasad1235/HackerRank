@@ -1,0 +1,56 @@
+char* isValid(char* s) {
+    static char yes[] = "YES";
+    static char no[] = "NO";
+    
+    int freq[26] = {0};
+
+    for (int i = 0; s[i] != '\0'; i++) {
+        freq[s[i] - 'a']++;
+    }
+
+    int maxFreq = 0;
+    for (int i = 0; i < 26; i++) {
+        if (freq[i] > maxFreq) {
+            maxFreq = freq[i];
+        }
+    }
+
+    int* freqOfFreq = calloc(maxFreq + 1, sizeof(int));
+    if (!freqOfFreq) return no; 
+
+    for (int i = 0; i < 26; i++) {
+        if (freq[i] > 0) {
+            freqOfFreq[freq[i]]++;
+        }
+    }
+
+    int f1 = 0, f2 = 0;
+    int f1Count = 0, f2Count = 0;
+
+    for (int i = 1; i <= maxFreq; i++) {
+        if (freqOfFreq[i] > 0) {
+            if (f1 == 0) {
+                f1 = i;
+                f1Count = freqOfFreq[i];
+            } else if (f2 == 0) {
+                f2 = i;
+                f2Count = freqOfFreq[i];
+            } else {
+                free(freqOfFreq);
+                return no;
+            }
+        }
+    }
+
+    int valid = 0;
+    if (f2 == 0) {
+        valid = 1; 
+    } else if ((f1 == 1 && f1Count == 1) || (f2 == 1 && f2Count == 1)) {
+        valid = 1; 
+    } else if ((abs(f1 - f2) == 1) && ((f1Count == 1 && f1 > f2) || (f2Count == 1 && f2 > f1))) {
+        valid = 1;
+    }
+
+    free(freqOfFreq);
+    return valid ? yes : no;
+}
