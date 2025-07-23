@@ -1,0 +1,24 @@
+int compare(const void *a, const void *b){
+    return (*(int*)a - *(int*)b);
+}
+
+int hackerlandRadioTransmitters(int x_count, int* x, int k) {
+    qsort(x, x_count, sizeof(int), compare);
+    
+    int i = 0, transmitters = 0;
+    
+    while (i < x_count){
+        transmitters++;
+        
+        int loc = x[i] + k;
+        while (i < x_count && x[i] <= loc)
+            i++;
+            
+        int transmitter_location = x[i - 1];
+        loc = transmitter_location + k;
+        
+        while (i < x_count && x[i] <= loc)
+            i++;    
+    }
+    return transmitters;
+}
