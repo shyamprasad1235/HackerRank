@@ -1,0 +1,55 @@
+char* highestValuePalindrome(char* s, int n, int k) {
+    char* result = malloc((n + 1) * sizeof(char));
+    strcpy(result, s);
+
+    int* changed = calloc(n, sizeof(int));
+    int left = 0, right = n - 1;
+    int changes = 0;
+
+    while (left < right) {
+        if (result[left] != result[right]) {
+            char max_digit = result[left] > result[right] ? result[left] : result[right];
+            result[left] = result[right] = max_digit;
+            changed[left] = changed[right] = 1;
+            changes++;
+        }
+        left++;
+        right--;
+    }
+
+    if (changes > k) {
+        free(result);
+        return "-1";
+    }
+
+    left = 0;
+    right = n - 1;
+    int remaining_changes = k - changes;
+
+    while (left <= right) {
+        if (left == right) {
+            if (remaining_changes > 0 && result[left] != '9') {
+                result[left] = '9';
+                remaining_changes--;
+            }
+        }
+        else {
+            if (result[left] < '9') {
+                if (changed[left] || changed[right]) {
+                    if (remaining_changes >= 1) {
+                        result[left] = result[right] = '9';
+                        remaining_changes--;
+                    }
+                } else if (remaining_changes >= 2) {
+                    result[left] = result[right] = '9';
+                    remaining_changes -= 2;
+                }
+            }
+        }
+        left++;
+        right--;
+    }
+
+    result[n] = '\0';
+    return result;
+}
