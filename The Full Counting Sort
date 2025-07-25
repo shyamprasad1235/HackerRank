@@ -1,0 +1,45 @@
+#define MAX_INDEX 100
+
+void countSort(int arr_rows, int arr_columns, char*** arr) {
+  
+    char** result[MAX_INDEX] = {0};  
+    int sizes[MAX_INDEX] = {0};      
+    int capacities[MAX_INDEX] = {0}; 
+
+    for (int i = 0; i < arr_rows; i++) {
+        int key = atoi(arr[i][0]);
+        char* value;
+
+        if (i < arr_rows / 2) {
+            value = "-";
+        } else {
+            value = arr[i][1];
+        }
+
+        if (capacities[key] == 0) {
+            capacities[key] = 10;
+            result[key] = malloc(capacities[key] * sizeof(char*));
+        }
+
+        if (sizes[key] >= capacities[key]) {
+            capacities[key] *= 2;
+            result[key] = realloc(result[key], capacities[key] * sizeof(char*));
+        }
+
+        result[key][sizes[key]++] = value;
+    }
+
+    for (int i = 0; i < MAX_INDEX; i++) {
+        for (int j = 0; j < sizes[i]; j++) {
+            printf("%s ", result[i][j]);
+        }
+    }
+
+    printf("\n");
+
+    for (int i = 0; i < MAX_INDEX; i++) {
+        if (result[i]) {
+            free(result[i]);
+        }
+    }
+}
