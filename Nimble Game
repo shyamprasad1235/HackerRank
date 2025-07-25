@@ -1,0 +1,21 @@
+char* nimbleGame(int s_count, int* s) {
+    int xor_sum = 0;
+    
+    for (int i = 1; i < s_count; i++){
+        if (s[i] % 2 != 0){
+            xor_sum ^= i;
+        }
+    }
+    
+    char* result = malloc(7 * sizeof(char));
+    
+    if (!result){
+        exit(EXIT_FAILURE);
+    }
+    if (xor_sum != 0){
+        strcpy(result, "First");
+    }else{
+        strcpy(result, "Second");
+    }
+    return result;
+}
