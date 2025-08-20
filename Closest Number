@@ -1,51 +1,15 @@
-import java.io.*;
-import java.util.*;
-import java.math.*;
+int closestNumber(int a, int b, int x) {
 
-class Result {
+    long long p = (long long) round(pow(a, b));  
 
-    /*
-     * Complete the 'closestNumber' function below.
-     *
-     * The function is expected to return an INTEGER.
-     * The function accepts following parameters:
-     *  1. INTEGER a
-     *  2. INTEGER b
-     *  3. INTEGER x
-     */
+    long long low = (p / x) * x;
+    long long high = (p >= 0 ? low + x : low - x); 
 
-    public static int closestNumber(int a, int b, int x) {
-        // Compute a^b
-        double pow = Math.pow(a, b);
-        
-        // Find the closest multiple of x
-        int closest = (int) Math.round(pow / x) * x;
-        
-        return closest;
-    }
+    long long diffLow = llabs(p - low);
+    long long diffHigh = llabs(high - p);
+
+    if (diffLow < diffHigh) return (int)low;
+    else if (diffLow > diffHigh) return (int)high;
+    else return (int)(high); 
 }
 
-public class Solution {
-    public static void main(String[] args) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
-
-        int t = Integer.parseInt(bufferedReader.readLine().trim());
-
-        for (int i = 0; i < t; i++) {
-            String[] input = bufferedReader.readLine().trim().split(" ");
-
-            int a = Integer.parseInt(input[0]);
-            int b = Integer.parseInt(input[1]);
-            int x = Integer.parseInt(input[2]);
-
-            int result = Result.closestNumber(a, b, x);
-
-            bufferedWriter.write(String.valueOf(result));
-            bufferedWriter.newLine();
-        }
-
-        bufferedReader.close();
-        bufferedWriter.close();
-    }
-}
