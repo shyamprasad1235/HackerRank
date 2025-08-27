@@ -1,11 +1,10 @@
 int pylons(int k, int arr_count, int* arr) {
-    int count = 0;  // To count number of power plants placed
-    int i = 0;      // Starting from city 0
+    int count = 0;  
+    int i = 0;      
     
     while (i < arr_count) {
         int plant_pos = -1;
-        
-        // Try to find the farthest plant that can cover current city i
+
         int start = (i + k - 1 < arr_count) ? i + k - 1 : arr_count - 1;
         int end = (i - k + 1 > 0) ? i - k + 1 : 0;
         
@@ -17,11 +16,11 @@ int pylons(int k, int arr_count, int* arr) {
         }
         
         if (plant_pos == -1) {
-            return -1; // No plant can be placed to cover current city
+            return -1; 
         }
         
-        count++;               // Place the plant
-        i = plant_pos + k;      // Jump to the next uncovered city
+        count++;               
+        i = plant_pos + k;      
     }
     
     return count;
