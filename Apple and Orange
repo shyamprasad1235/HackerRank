@@ -1,0 +1,19 @@
+void countApplesAndOranges(int s, int t, int a, int b, 
+                           int apples_count, int* apples, 
+                           int oranges_count, int* oranges) {
+    int appleCount = 0, orangeCount = 0;
+    for (int i = 0; i < apples_count; i++) {
+        int landingPosition = a + apples[i]; // position where apple falls
+        if (landingPosition >= s && landingPosition <= t) {
+            appleCount++;
+        }
+    }
+    for (int i = 0; i < oranges_count; i++) {
+        int landingPosition = b + oranges[i]; // position where orange falls
+        if (landingPosition >= s && landingPosition <= t) {
+            orangeCount++;
+        }
+    }
+    printf("%d\n", appleCount);
+    printf("%d\n", orangeCount);
+}
