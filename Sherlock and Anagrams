@@ -1,0 +1,58 @@
+int cmp_char(const void *a, const void *b) {
+    return (*(char *)a - *(char *)b);
+}
+unsigned long hash(const char *str) {
+    unsigned long h = 5381;
+    int c;
+    while ((c = *str++)) {
+        h = ((h << 5) + h) + c; // h*33 + c
+    }
+    return h;
+}
+typedef struct Node {
+    char *key;
+    int count;
+    struct Node *next;
+} Node;
+
+#define TABLE_SIZE 100003
+
+Node *table[TABLE_SIZE];
+void insert(const char *key) {
+    unsigned long h = hash(key) % TABLE_SIZE;
+    Node *cur = table[h];
+    while (cur) {
+        if (strcmp(cur->key, key) == 0) {
+            cur->count++;
+            return;
+        }
+        cur = cur->next;
+    }
+    Node *newNode = malloc(sizeof(Node));
+    newNode->key = strdup(key);
+    newNode->count = 1;
+    newNode->next = table[h];
+    table[h] = newNode;
+}
+int sherlockAndAnagrams(char* s) {
+    int n = strlen(s);
+    for (int i = 0; i < TABLE_SIZE; i++) table[i] = NULL;
+    for (int len = 1; len <= n; len++) {
+        for (int i = 0; i + len <= n; i++) {
+            char *sub = strndup(s + i, len);
+            qsort(sub, len, sizeof(char), cmp_char); // canonical form
+            insert(sub);
+            free(sub);
+        }
+    }
+    long long ans = 0;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Node *cur = table[i];
+        while (cur) {
+            long long f = cur->count;
+            ans += f * (f - 1) / 2;
+            cur = cur->next;
+        }
+    }
+    return (int)ans;
+}
