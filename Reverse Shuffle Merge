@@ -1,0 +1,40 @@
+char* reverseShuffleMerge(char* s) {
+    int n = strlen(s);
+    int freq[26] = {0};
+    int used[26] = {0};
+    int required[26] = {0};
+
+    for (int i = 0; i < n; i++) {
+        freq[s[i] - 'a']++;
+    }
+
+    for (int i = 0; i < 26; i++) {
+        required[i] = freq[i] / 2;
+    }
+
+    char* result = malloc((n/2 + 1) * sizeof(char));
+    int top = -1; // stack pointer
+
+    for (int i = n - 1; i >= 0; i--) {
+        int c = s[i] - 'a';
+        freq[c]--;
+
+        if (used[c] < required[c]) {
+
+            while (top >= 0) {
+                int last = result[top] - 'a';
+                if (result[top] > s[i] && used[last] + freq[last] - 1 >= required[last]) {
+                    used[last]--;
+                    top--;
+                } else {
+                    break;
+                }
+            }
+            result[++top] = s[i];
+            used[c]++;
+        }
+    }
+
+    result[top + 1] = '\0';
+    return result;
+}
