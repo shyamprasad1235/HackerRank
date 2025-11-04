@@ -1,11 +1,40 @@
+1. C Code
+
+int twoStacks(int maxSum, int a_count, int* a, int b_count, int* b) {
+    int i = 0, j = 0, ans = 0;
+    long long sum = 0;
+
+    while (i < a_count && sum + a[i] <= maxSum) {
+        sum += a[i];
+        i++;
+    }
+
+    ans = i;  
+
+    while (j < b_count) {
+        sum += b[j];
+        j++;
+        while (sum > maxSum && i > 0) {
+            i--;
+            sum -= a[i];
+        }
+        if (sum <= maxSum && i + j > ans) {
+            ans = i + j;
+        }
+        if (sum > maxSum && i == 0)
+            break;
+    }
+    return ans;
+}
+
+2. Java Code
+
 import java.util.*;
 
 public class TwoStacks {
 
     public static int twoStacks(int x, List<Integer> stack1, List<Integer> stack2) {
         int sum = 0, count = 0, maxCount = 0;
-
-        // Add elements from stack1 until sum exceeds x
         int i = 0;
         while (i < stack1.size() && sum + stack1.get(i) <= x) {
             sum += stack1.get(i);
@@ -14,26 +43,20 @@ public class TwoStacks {
         count = i;
         maxCount = count;
 
-        // Start adding elements from stack2
         int j = 0;
         while (j < stack2.size()) {
             sum += stack2.get(j);
             j++;
             count++;
-
-            // Remove elements from stack1 if sum exceeds x
             while (sum > x && i > 0) {
                 i--;
                 sum -= stack1.get(i);
                 count--;
             }
-
-            // Update maxCount if sum is within limits
             if (sum <= x) {
                 maxCount = Math.max(maxCount, count);
             }
         }
-
         return maxCount;
     }
 
@@ -56,10 +79,9 @@ public class TwoStacks {
             for (int i = 0; i < m; i++) {
                 stack2.add(scanner.nextInt());
             }
-
             System.out.println(twoStacks(x, stack1, stack2));
         }
-
         scanner.close();
     }
 }
+
